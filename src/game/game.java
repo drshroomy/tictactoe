@@ -6,14 +6,14 @@ public class game {
 
 	public static Scanner reader = new Scanner(System.in);
 	
-	private static char[][] globalBoard = new char[][]{
+	private char[][] globalBoard = new char[][]{
 		  { 32, 32, 32, 'x' },
 		  { 32, 32, 32, 32 },
 		  { 32, 'x', 32, 32 },
 		  { 'x', 32, 32, 32 }
 		};
 	
-	public static void globalBoardLayout() {
+	public void globalBoardLayout() {
 		System.out.printf("---------\n");
 		for (int i = 0; i<globalBoard.length; i++) {
 			System.out.printf("|");
@@ -28,25 +28,27 @@ public class game {
 	//private static char cpu=0;
 	
 	public static void main(String[] args) {
+		
+		game ticTacToe = new game();
 
 		boolean game = true;
 		char cpu=0;
 		char turn=0;
 		
 		System.out.printf("Would you like to play against the computer? [y/n]\n");
-		char temp=goodinput('y','n');
+		char temp=ticTacToe.goodinput('y','n');
 		
 		if (temp=='y')
 		{	
 			System.out.printf("Would you like to be x's or o's? [x/o]\n");
-			char player=goodinput('x','o');
+			char player=ticTacToe.goodinput('x','o');
 			if (player=='o')
 				cpu='x';
 			else if (player=='x')
 				cpu='o';
 			
 			System.out.printf("Would you like to start? [y/n]\n");
-			temp=goodinput('y','n');
+			temp=ticTacToe.goodinput('y','n');
 			if (temp=='y')
 				turn=player;
 			else if (temp=='n')
@@ -60,11 +62,11 @@ public class game {
 		
 		while(game==true) // runs the game. once this loop is broken, the game ends
 		{	
-			turn(turn,cpu); // execute a turn
+			ticTacToe.turn(turn,cpu); // execute a turn
 			
-			globalBoardLayout(); // draw the board
+			ticTacToe.globalBoardLayout(); // draw the board
 				
-			game=checkwin(); // check if someone won
+			game=ticTacToe.checkwin(); // check if someone won
 			
 			if (game==true)
 			{
@@ -86,7 +88,7 @@ public class game {
 		
 		
 	}
-	public static char goodinput(char op1, char op2)
+	private char goodinput(char op1, char op2)
 	{
 		char temp = reader.next().charAt(0);
 		
@@ -98,7 +100,7 @@ public class game {
 		return temp;
 	}
 	
-	public static int[] cputurn(char cpu)
+	private int[] cputurn(char cpu)
 	{
 		//int x = 5;
 		//int y = 5;
@@ -321,7 +323,7 @@ public class game {
 		
 		
 	}
-	public static int[] playerturn(char turn)
+	private int[] playerturn(char turn)
 	{
 		int[] arr = new int[2];
 		
@@ -345,7 +347,7 @@ public class game {
 		}
 	}
 
-	public static void turn(char turn,char cpu)
+	private void turn(char turn,char cpu)
 	{
 		int[] arr = new int[2];
 		if (cpu==0)
@@ -372,7 +374,7 @@ public class game {
 	}
 	
 	
-	public static boolean checkwin()
+	private boolean checkwin()
 	{
 		boolean game=true;
 		for(int i = 0; i < globalBoard.length; i++) //check if a victory occurred
