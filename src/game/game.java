@@ -6,11 +6,15 @@ public class game {
 
 	public static Scanner reader = new Scanner(System.in);
 	
+	private char cpu=0;
+	private char cturn=0;
+	private char player=0;
+	
 	private char[][] globalBoard = new char[][]{
-		  { 32, 32, 32, 'x' },
+		  { 32, 'x', 32, 32 },
 		  { 32, 32, 32, 32 },
 		  { 32, 'x', 32, 32 },
-		  { 'x', 32, 32, 32 }
+		  { 32, 'x', 32, 32 }
 		};
 	
 	public void globalBoardLayout() {
@@ -25,15 +29,13 @@ public class game {
 		}
 		
 	}
-	//private static char cpu=0;
 	
 	public static void main(String[] args) {
 		
 		game ticTacToe = new game();
 
 		boolean game = true;
-		char cpu=0;
-		char turn=0;
+		//char turn=0;
 		
 		System.out.printf("Would you like to play against the computer? [y/n]\n");
 		char temp=ticTacToe.goodinput('y','n');
@@ -41,28 +43,28 @@ public class game {
 		if (temp=='y')
 		{	
 			System.out.printf("Would you like to be x's or o's? [x/o]\n");
-			char player=ticTacToe.goodinput('x','o');
-			if (player=='o')
-				cpu='x';
-			else if (player=='x')
-				cpu='o';
+			ticTacToe.player=ticTacToe.goodinput('x','o');
+			if (ticTacToe.player=='o')
+				ticTacToe.cpu='x';
+			else if (ticTacToe.player=='x')
+				ticTacToe.cpu='o';
 			
 			System.out.printf("Would you like to start? [y/n]\n");
 			temp=ticTacToe.goodinput('y','n');
 			if (temp=='y')
-				turn=player;
+				ticTacToe.cturn=ticTacToe.player;
 			else if (temp=='n')
-				turn=cpu;
+				ticTacToe.cturn=ticTacToe.cpu;
 		}
 		
 		else if(temp=='n')
 		{
-			turn='x';
+			ticTacToe.cturn='x';
 		}
 		
 		while(game==true) // runs the game. once this loop is broken, the game ends
 		{	
-			ticTacToe.turn(turn,cpu); // execute a turn
+			ticTacToe.turn(); // execute a turn
 			
 			ticTacToe.globalBoardLayout(); // draw the board
 				
@@ -71,16 +73,16 @@ public class game {
 			if (game==true)
 			{
 				//turn = turn=='x'?'o':'x';
-				if (turn == 'x')
-					turn = 'o';
-				else if(turn == 'o')
-					turn = 'x';
+				if (ticTacToe.cturn == 'x')
+					ticTacToe.cturn = 'o';
+				else if(ticTacToe.cturn == 'o')
+					ticTacToe.cturn = 'x';
 			}
 			
 		}
-		if (cpu==0)
-			System.out.printf("Player %c wins!",turn);
-		else if(cpu==turn)
+		if (ticTacToe.cpu==0)
+			System.out.printf("Player %c wins!",ticTacToe.cturn);
+		else if(ticTacToe.cpu==ticTacToe.cturn)
 			System.out.printf("The computer wins!");
 		else
 			System.out.printf("The player wins!");
@@ -100,21 +102,55 @@ public class game {
 		return temp;
 	}
 	
-	private int[] cputurn(char cpu)
+	private int[] cpuNewTurn() {
+		int winLoc[] = new int[2];
+		int i=0,j=0;
+		for (i=0; i<globalBoard.length; i++) {
+			int numOfMine=0;
+			int numOfEmpty=0;
+			int indexOfEmpty=5;
+			for (j=0; j<globalBoard[i].length; j++ ) {
+				if (globalBoard[i][j] == cpu) {
+					numOfMine++;
+				}
+				if (globalBoard[i][j] == 32) {
+					numOfEmpty++;
+					indexOfEmpty=j;
+				}
+			}
+			if (numOfEmpty==1 && numOfMine==3) {
+				winLoc[0]=i;
+				winLoc[1]=indexOfEmpty;
+				return winLoc;
+			}
+		}
+		for (i=0; i<globalBoard.length; i++) {
+			int numOfMine=0;
+			int numOfEmpty=0;
+			int indexOfEmpty=0;
+			for (j=0; j<globalBoard.length; j++ ) {
+				if (globalBoard[j][i] == cpu) {
+					numOfMine++;
+				}
+				if (globalBoard[j][i] == 32) {
+					numOfEmpty++;
+					indexOfEmpty=j;
+				}
+			}
+			if (numOfEmpty==1 && numOfMine==3) {
+				winLoc[0]=indexOfEmpty;
+				winLoc[1]=i;
+				return winLoc;
+			}
+		}
+		return winLoc;
+	}
+	
+	private int[] cputurn()
 	{
 		//int x = 5;
 		//int y = 5;
 		int arr[] = new int[2];
-		char player=0;
-		
-		if(cpu=='x')
-		{
-			player='o';
-		}
-		else if (cpu=='o')
-		{
-			player='x';
-		}
 
 		for (int i = 0; i<globalBoard.length; i++)
 		{
@@ -323,7 +359,7 @@ public class game {
 		
 		
 	}
-	private int[] playerturn(char turn)
+	private int[] playerturn()
 	{
 		int[] arr = new int[2];
 		
@@ -347,30 +383,30 @@ public class game {
 		}
 	}
 
-	private void turn(char turn,char cpu)
+	private void turn()
 	{
 		int[] arr = new int[2];
 		if (cpu==0)
 		{
-			System.out.printf("Now its player %c's turn! \nPlease enter where you would like to place your %c: \n",turn, turn);
-			arr = playerturn(turn);
+			System.out.printf("Now its player %c's turn! \nPlease enter where you would like to place your %c: \n",cturn, cturn);
+			arr = playerturn();
 		}
 		else
 		{
-			if (cpu==turn)
+			if (cpu==cturn)
 			{
 				System.out.printf("Now its the computer's turn\n");
-				arr = cputurn(cpu);
+				arr = cpuNewTurn();
 				System.out.printf("The computer places an %c at %d,%d\n",cpu,arr[0],arr[1]);
 				
 			}
 			else
 			{
-				System.out.printf("Now its the player's turn! \nPlease enter where you would like to place your %c: \n",turn);
-				arr = playerturn(turn);
+				System.out.printf("Now its the player's turn! \nPlease enter where you would like to place your %c: \n",cturn);
+				arr = playerturn();
 			}
 		}
-		globalBoard[arr[0]][arr[1]]=turn;
+		globalBoard[arr[0]][arr[1]]=cturn;
 	}
 	
 	
