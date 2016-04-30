@@ -9,12 +9,13 @@ public class game {
 	private char cpu=0;
 	private char cturn=0;
 	private char player=0;
+	private char win=0;
 	
 	private char[][] globalBoard = new char[][]{
-		  { 'x', 32, 32, 32 },
-		  { 32, 'x', 32, 32 },
 		  { 32, 32, 32, 32 },
-		  { 32, 32, 32, 'x' }
+		  { 32, 32, 32, 32 },
+		  { 32, 32, 32, 32 },
+		  { 32, 32, 32, 32 }
 		};
 	
 	public void globalBoardLayout() {
@@ -57,9 +58,7 @@ public class game {
 		}
 		
 		else if(temp=='n')
-		{
 			ticTacToe.cturn='x';
-		}
 		
 		while(game==true) // runs the game. once this loop is broken, the game ends
 		{	
@@ -75,10 +74,12 @@ public class game {
 		}
 		if (ticTacToe.cpu==0)
 			System.out.printf("\nPlayer %c wins!",ticTacToe.cturn);
-		else if(ticTacToe.cpu==ticTacToe.cturn)
+		else if(ticTacToe.cpu==ticTacToe.win)
 			System.out.printf("\nThe computer wins!");
-		else if(ticTacToe.player==ticTacToe.cturn)
+		else if(ticTacToe.player==ticTacToe.win)
 			System.out.printf("\nThe player wins!");
+		else if('t'==ticTacToe.win)
+			System.out.printf("\nTie");
 		
 		
 		
@@ -195,7 +196,7 @@ public class game {
 			
 		}
 		
-		for (int g=0;g<lev.length; g++) {
+		for (int g=0;g<1/*lev.length*/; g++) {
 			
 		
 			for (i=0; i<globalBoard.length; i++) {	
@@ -252,15 +253,213 @@ public class game {
 					}
 
 				}
-				if (numOfEmpty==1 && numOfMine==3) {
+				if (numOfEmpty==2 && numOfMine==2) {
 					winLoc[0]=indexOfEmpty;
 					winLoc[1]=indexOfEmpty;
+					return winLoc;
+				}
+				
+				numOfMine=0;
+				numOfEmpty=0;
+				indexOfEmpty=0;
+				for (i=0; i<globalBoard.length; i++) {
+			
+					if (globalBoard[i][3-i] == lev[g]) {
+						numOfMine++;
+					}
+					if (globalBoard[i][3-i] == 32) {
+						numOfEmpty++;
+						indexOfEmpty=i;
+					}
+				
+					if (numOfEmpty==2 && numOfMine==2) {
+						winLoc[0]=indexOfEmpty;
+						winLoc[1]=3-indexOfEmpty;
+						return winLoc;
+					}
+				}
+				if (numOfEmpty==2 && numOfMine==2) {
 					return winLoc;
 				}
 			
 				
 		}
+		for (i=0; i<globalBoard.length; i++) {	
+			numOfMine=0;
+			numOfEmpty=0;
+			indexOfEmpty=0;
+			for (j=0; j<globalBoard[i].length; j++ ) {
+				if (globalBoard[i][j] == cpu) {
+					numOfMine++;
+				}
+				if (globalBoard[i][j] == 32) {
+					numOfEmpty++;
+					indexOfEmpty=j;
+				}
+			}
+			if (numOfEmpty==3 && numOfMine==1) {
+				winLoc[0]=i;
+				winLoc[1]=indexOfEmpty;
+				return winLoc;
+			}
+		}
+		for (i=0; i<globalBoard.length; i++) {
+			numOfMine=0;
+			numOfEmpty=0;
+			indexOfEmpty=0;
+			for (j=0; j<globalBoard.length; j++ ) {
+				if (globalBoard[j][i] == cpu) {
+					numOfMine++;
+				}
+				if (globalBoard[j][i] == 32) {
+					numOfEmpty++;
+					indexOfEmpty=j;
+				}
+			}
+			if (numOfEmpty==3 && numOfMine==1) {
+				winLoc[0]=indexOfEmpty;
+				winLoc[1]=i;
+				return winLoc;
+			}
+		}
+		numOfMine=0;
+		numOfEmpty=0;
+		indexOfEmpty=0;
+		for (i=0; i<globalBoard.length; i++) {
+	
+			if (globalBoard[i][i] == cpu) {
+				numOfMine++;
+			}
+			else if (globalBoard[i][i] == 32) {
+				numOfEmpty++;
+				indexOfEmpty=i;
+			}
+
+		}
+		if (numOfEmpty==3 && numOfMine==1) {
+			winLoc[0]=indexOfEmpty;
+			winLoc[1]=indexOfEmpty;
+			return winLoc;
+		}
+		numOfMine=0;
+		numOfEmpty=0;
+		indexOfEmpty=0;
+		for (i=0; i<globalBoard.length; i++) {
+	
+			if (globalBoard[i][3-i] == cpu) {
+				numOfMine++;
+			}
+			if (globalBoard[i][3-i] == 32) {
+				numOfEmpty++;
+				indexOfEmpty=i;
+			}
 		
+			if (numOfEmpty==3 && numOfMine==1) {
+				winLoc[0]=indexOfEmpty;
+				winLoc[1]=3-indexOfEmpty;
+				return winLoc;
+			}
+		}
+		if (numOfEmpty==3 && numOfMine==1) {
+			return winLoc;
+		}
+		
+		for (i=0; i<globalBoard.length; i++) {	
+			numOfMine=0;
+			numOfEmpty=0;
+			indexOfEmpty=0;
+			for (j=0; j<globalBoard[i].length; j++ ) {
+				if (globalBoard[i][j] == cpu) {
+					numOfMine++;
+				}
+				else if (globalBoard[i][j] == 32) {
+					numOfEmpty++;
+					indexOfEmpty=j;
+				}
+	
+			}
+			if (numOfEmpty==4 && numOfMine==0) {
+				winLoc[0]=i;
+				winLoc[1]=indexOfEmpty;
+				return winLoc;
+			}
+		}
+		for (i=0; i<globalBoard.length; i++) {
+			numOfMine=0;
+			numOfEmpty=0;
+			indexOfEmpty=0;
+			for (j=0; j<globalBoard.length; j++ ) {
+				if (globalBoard[j][i] == cpu) {
+					numOfMine++;
+				}
+				if (globalBoard[j][i] == 32) {
+					numOfEmpty++;
+					indexOfEmpty=j;
+				}
+			}
+			if (numOfEmpty==4 && numOfMine==0) {
+				winLoc[0]=indexOfEmpty;
+				winLoc[1]=i;
+				return winLoc;
+			}
+		}
+		numOfMine=0;
+		numOfEmpty=0;
+		indexOfEmpty=0;
+		for (i=0; i<globalBoard.length; i++) {
+	
+			if (globalBoard[i][i] == cpu) {
+				numOfMine++;
+			}
+			else if (globalBoard[i][i] == 32) {
+				numOfEmpty++;
+				indexOfEmpty=i;
+			}
+
+		}
+		if (numOfEmpty==4 && numOfMine==0) {
+			winLoc[0]=indexOfEmpty;
+			winLoc[1]=indexOfEmpty;
+			return winLoc;
+		}
+		numOfMine=0;
+		numOfEmpty=0;
+		indexOfEmpty=0;
+		for (i=0; i<globalBoard.length; i++) {
+	
+			if (globalBoard[i][3-i] == cpu) {
+				numOfMine++;
+			}
+			if (globalBoard[i][3-i] == 32) {
+				numOfEmpty++;
+				indexOfEmpty=i;
+			}
+		
+			if (numOfEmpty==4 && numOfMine==0) {
+				winLoc[0]=indexOfEmpty;
+				winLoc[1]=3-indexOfEmpty;
+				return winLoc;
+			}
+		}
+		if (numOfEmpty==4 && numOfMine==0) {
+			return winLoc;
+		}
+		
+		numOfMine=0;
+		numOfEmpty=0;
+		indexOfEmpty=0;
+		for (i=0; i<globalBoard.length; i++) {	
+			numOfMine=0;
+			numOfEmpty=0;
+			indexOfEmpty=0;
+			for (j=0; j<globalBoard[i].length; j++ ) {
+				if (globalBoard[i][j] == 32) {
+					winLoc[0]=i;
+					winLoc[1]=j;
+					return winLoc;
+				}
+			}
+		}
 		
 		return winLoc;
 	}
@@ -325,12 +524,14 @@ public class game {
 			{
 				game=false;
 				System.out.printf("Tic Tac Toe on Row %d!\n", i);
+				win = globalBoard[i][0];
 			}
 			
 			if(globalBoard[0][i]==globalBoard[1][i]&&globalBoard[0][i]==globalBoard[2][i]&&globalBoard[0][i]==globalBoard[3][i]&&globalBoard[0][i]!=32)
 			{
 				game=false;
 				System.out.printf("Tic Tac Toe on Column %d!\n", i);
+				win = globalBoard[0][i];
 			}
 		}
 		
@@ -338,12 +539,31 @@ public class game {
 		{
 			game=false;
 			System.out.printf("Tic Tac Toe on diagonal!\n");
+			win = globalBoard[0][0];
 		}
 		
-		if (globalBoard[3][0]==globalBoard[2][1]&&globalBoard[3][0]==globalBoard[1][2]&&globalBoard[3][0]==globalBoard[0][3]&&globalBoard[3][0]!=32)
+		else if (globalBoard[3][0]==globalBoard[2][1]&&globalBoard[3][0]==globalBoard[1][2]&&globalBoard[3][0]==globalBoard[0][3]&&globalBoard[3][0]!=32)
 		{
 			game=false;
 			System.out.printf("Tic Tac Toe on reverse diagonal!\n");
+			win = globalBoard[3][0];
+		}
+		else
+		{
+			boolean check=false;
+			for(int i = 0; i<globalBoard.length;i++)
+			{
+				for(int j = 0; j<globalBoard[i].length;j++)
+				{
+					if(globalBoard[i][j]==32)
+						check=true;
+				}
+			}
+			if(check==false)
+			{
+				win='t';
+				game=false;
+			}		
 		}
 	
 		return game;
