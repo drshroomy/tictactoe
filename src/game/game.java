@@ -11,10 +11,10 @@ public class game {
 	private char player=0;
 	
 	private char[][] globalBoard = new char[][]{
+		  { 'x', 32, 32, 32 },
 		  { 32, 'x', 32, 32 },
 		  { 32, 32, 32, 32 },
-		  { 32, 'x', 32, 32 },
-		  { 32, 'x', 32, 32 }
+		  { 32, 32, 32, 'x' }
 		};
 	
 	public void globalBoardLayout() {
@@ -35,21 +35,20 @@ public class game {
 		game ticTacToe = new game();
 
 		boolean game = true;
-		//char turn=0;
 		
-		System.out.printf("Would you like to play against the computer? [y/n]\n");
+		System.out.printf("\nWould you like to play against the computer? [y/n] ");
 		char temp=ticTacToe.goodinput('y','n');
 		
 		if (temp=='y')
 		{	
-			System.out.printf("Would you like to be x's or o's? [x/o]\n");
+			System.out.printf("\nWould you like to be x's or o's? [x/o] ");
 			ticTacToe.player=ticTacToe.goodinput('x','o');
 			if (ticTacToe.player=='o')
 				ticTacToe.cpu='x';
 			else if (ticTacToe.player=='x')
 				ticTacToe.cpu='o';
 			
-			System.out.printf("Would you like to start? [y/n]\n");
+			System.out.printf("\nWould you like to start? [y/n] ");
 			temp=ticTacToe.goodinput('y','n');
 			if (temp=='y')
 				ticTacToe.cturn=ticTacToe.player;
@@ -71,21 +70,15 @@ public class game {
 			game=ticTacToe.checkwin(); // check if someone won
 			
 			if (game==true)
-			{
-				//turn = turn=='x'?'o':'x';
-				if (ticTacToe.cturn == 'x')
-					ticTacToe.cturn = 'o';
-				else if(ticTacToe.cturn == 'o')
-					ticTacToe.cturn = 'x';
-			}
+				ticTacToe.cturn = ticTacToe.cturn=='x'?'o':'x';
 			
 		}
 		if (ticTacToe.cpu==0)
-			System.out.printf("Player %c wins!",ticTacToe.cturn);
+			System.out.printf("\nPlayer %c wins!",ticTacToe.cturn);
 		else if(ticTacToe.cpu==ticTacToe.cturn)
-			System.out.printf("The computer wins!");
-		else
-			System.out.printf("The player wins!");
+			System.out.printf("\nThe computer wins!");
+		else if(ticTacToe.player==ticTacToe.cturn)
+			System.out.printf("\nThe player wins!");
 		
 		
 		
@@ -95,270 +88,183 @@ public class game {
 		char temp = reader.next().charAt(0);
 		
 		while(temp!=op1 && temp!=op2)
-		{
-			System.out.printf("Please enter an %c or an %c\n", op1, op2);
 			temp = reader.next().charAt(0);
-		}
+
 		return temp;
 	}
 	
-	private int[] cpuNewTurn() {
+	private int[] cputurn() {
+		char[] lev = new char[2];
+		lev[0]=cpu;
+		lev[1]=player;
 		int winLoc[] = new int[2];
 		int i=0,j=0;
-		for (i=0; i<globalBoard.length; i++) {
-			int numOfMine=0;
-			int numOfEmpty=0;
-			int indexOfEmpty=5;
-			for (j=0; j<globalBoard[i].length; j++ ) {
-				if (globalBoard[i][j] == cpu) {
-					numOfMine++;
+		int numOfMine=0;
+		int numOfEmpty=0;
+		int indexOfEmpty=0;
+	
+		for(int g = 0; g<lev.length; g++)
+		{
+			
+			for (i=0; i<globalBoard.length; i++) {	
+				numOfMine=0;
+				numOfEmpty=0;
+				indexOfEmpty=0;
+				for (j=0; j<globalBoard[i].length; j++ ) {
+					if (globalBoard[i][j] == lev[g]) {
+						numOfMine++;
+					}
+					if (globalBoard[i][j] == 32) {
+						numOfEmpty++;
+						indexOfEmpty=j;
+					}
 				}
-				if (globalBoard[i][j] == 32) {
-					numOfEmpty++;
-					indexOfEmpty=j;
+				if (numOfEmpty==1 && numOfMine==3) {
+					winLoc[0]=i;
+					winLoc[1]=indexOfEmpty;
+					return winLoc;
 				}
 			}
-			if (numOfEmpty==1 && numOfMine==3) {
-				winLoc[0]=i;
-				winLoc[1]=indexOfEmpty;
-				return winLoc;
+			for (i=0; i<globalBoard.length; i++) {
+				numOfMine=0;
+				numOfEmpty=0;
+				indexOfEmpty=0;
+				for (j=0; j<globalBoard.length; j++ ) {
+					if (globalBoard[j][i] == lev[g]) {
+						numOfMine++;
+					}
+					if (globalBoard[j][i] == 32) {
+						numOfEmpty++;
+						indexOfEmpty=j;
+					}
+				}
+				if (numOfEmpty==1 && numOfMine==3) {
+					winLoc[0]=indexOfEmpty;
+					winLoc[1]=i;
+					return winLoc;
+				}
 			}
+			
+				numOfMine=0;
+				numOfEmpty=0;
+				indexOfEmpty=0;
+				for (i=0; i<globalBoard.length; i++) {
+			
+					if (globalBoard[i][i] == lev[g]) {
+						numOfMine++;
+					}
+					if (globalBoard[i][i] == 32) {
+						numOfEmpty++;
+						indexOfEmpty=i;
+					}
+
+					if (numOfEmpty==1 && numOfMine==3) {
+						winLoc[0]=indexOfEmpty;
+						winLoc[1]=indexOfEmpty;
+						return winLoc;
+					}
+				}
+				if (numOfEmpty==1 && numOfMine==3) {
+					winLoc[0]=indexOfEmpty;
+					winLoc[1]=indexOfEmpty;
+					return winLoc;
+				}
+			
+				numOfMine=0;
+				numOfEmpty=0;
+				indexOfEmpty=0;
+				for (i=0; i<globalBoard.length; i++) {
+			
+					if (globalBoard[i][3-i] == lev[g]) {
+						numOfMine++;
+					}
+					if (globalBoard[i][3-i] == 32) {
+						numOfEmpty++;
+						indexOfEmpty=i;
+					}
+				
+					if (numOfEmpty==1 && numOfMine==3) {
+						winLoc[0]=indexOfEmpty;
+						winLoc[1]=3-indexOfEmpty;
+						return winLoc;
+					}
+				}
+				if (numOfEmpty==1 && numOfMine==3) {
+					return winLoc;
+				}
+			
 		}
-		for (i=0; i<globalBoard.length; i++) {
-			int numOfMine=0;
-			int numOfEmpty=0;
-			int indexOfEmpty=0;
-			for (j=0; j<globalBoard.length; j++ ) {
-				if (globalBoard[j][i] == cpu) {
-					numOfMine++;
+		
+		for (int g=0;g<lev.length; g++) {
+			
+		
+			for (i=0; i<globalBoard.length; i++) {	
+				numOfMine=0;
+				numOfEmpty=0;
+				indexOfEmpty=0;
+				for (j=0; j<globalBoard[i].length; j++ ) {
+					if (globalBoard[i][j] == lev[g]) {
+						numOfMine++;
+					}
+					else if (globalBoard[i][j] == 32) {
+						numOfEmpty++;
+						indexOfEmpty=j;
+					}
+		
 				}
-				if (globalBoard[j][i] == 32) {
-					numOfEmpty++;
-					indexOfEmpty=j;
+				if (numOfEmpty==2 && numOfMine==2) {
+					winLoc[0]=i;
+					winLoc[1]=indexOfEmpty;
+					return winLoc;
 				}
 			}
-			if (numOfEmpty==1 && numOfMine==3) {
-				winLoc[0]=indexOfEmpty;
-				winLoc[1]=i;
-				return winLoc;
+			for (i=0; i<globalBoard.length; i++) {
+				numOfMine=0;
+				numOfEmpty=0;
+				indexOfEmpty=0;
+				for (j=0; j<globalBoard.length; j++ ) {
+					if (globalBoard[j][i] == lev[g]) {
+						numOfMine++;
+					}
+					if (globalBoard[j][i] == 32) {
+						numOfEmpty++;
+						indexOfEmpty=j;
+					}
+				}
+				if (numOfEmpty==2 && numOfMine==2) {
+					winLoc[0]=indexOfEmpty;
+					winLoc[1]=i;
+					return winLoc;
+				}
 			}
+			
+				numOfMine=0;
+				numOfEmpty=0;
+				indexOfEmpty=0;
+				for (i=0; i<globalBoard.length; i++) {
+			
+					if (globalBoard[i][i] == lev[g]) {
+						numOfMine++;
+					}
+					else if (globalBoard[i][i] == 32) {
+						numOfEmpty++;
+						indexOfEmpty=i;
+					}
+
+				}
+				if (numOfEmpty==1 && numOfMine==3) {
+					winLoc[0]=indexOfEmpty;
+					winLoc[1]=indexOfEmpty;
+					return winLoc;
+				}
+			
+				
 		}
+		
+		
 		return winLoc;
 	}
 	
-	private int[] cputurn()
-	{
-		//int x = 5;
-		//int y = 5;
-		int arr[] = new int[2];
-
-		for (int i = 0; i<globalBoard.length; i++)
-		{
-			if (globalBoard[i][0]==globalBoard[i][1]&&globalBoard[i][0]==globalBoard[i][2]&&globalBoard[i][0]==cpu&&globalBoard[i][3]==32)
-			{
-				arr[0]=i;
-				arr[1]=3;
-				return arr;
-			}
-			else if (globalBoard[i][0]==globalBoard[i][1]&&globalBoard[i][0]==globalBoard[i][3]&&globalBoard[i][0]==cpu&&globalBoard[i][2]==32)
-			{
-				arr[0]=i;
-				arr[1]=2;
-				return arr;
-			}
-			else if (globalBoard[i][0]==globalBoard[i][3]&&globalBoard[i][0]==globalBoard[i][2]&&globalBoard[i][0]==cpu&&globalBoard[i][1]==32)
-			{
-				arr[0]=i;
-				arr[1]=1;
-				return arr;
-			}
-			else if (globalBoard[i][1]==globalBoard[i][3]&&globalBoard[i][1]==globalBoard[i][2]&&globalBoard[i][1]==cpu&&globalBoard[i][0]==32)
-			{
-				arr[0]=i;
-				arr[1]=0;
-				return arr;
-			}
-			else if (globalBoard[0][i]==globalBoard[1][i]&&globalBoard[0][i]==globalBoard[2][i]&&globalBoard[0][i]==cpu&&globalBoard[3][i]==32)
-			{
-				arr[0]=3;
-				arr[1]=i;
-				return arr;
-			}
-			else if (globalBoard[0][i]==globalBoard[3][i]&&globalBoard[0][i]==globalBoard[2][i]&&globalBoard[0][i]==cpu&&globalBoard[1][i]==32)
-			{
-				arr[0]=1;
-				arr[1]=i;
-				return arr;
-			}
-			else if (globalBoard[0][i]==globalBoard[1][i]&&globalBoard[0][i]==globalBoard[3][i]&&globalBoard[0][i]==cpu&&globalBoard[2][i]==32)
-			{
-				arr[0]=2;
-				arr[1]=i;
-				return arr;
-			}
-			else if (globalBoard[1][i]==globalBoard[1][i]&&globalBoard[1][i]==globalBoard[2][i]&&globalBoard[1][i]==cpu&&globalBoard[0][i]==32)
-			{
-				arr[0]=0;
-				arr[1]=i;
-				return arr;
-			}
-
-		}
-		
-		if(globalBoard[0][0]==globalBoard[1][1]&&globalBoard[0][0]==globalBoard[2][2]&&globalBoard[0][0]==cpu&&globalBoard[3][3]==32)
-		{
-			arr[0]=3;
-			arr[1]=3;
-			return arr;
-		}
-		else if(globalBoard[3][3]==globalBoard[1][1]&&globalBoard[3][3]==globalBoard[2][2]&&globalBoard[3][3]==cpu&&globalBoard[0][0]==32)
-		{
-			arr[0]=0;
-			arr[1]=0;
-			return arr;
-		}
-		else if(globalBoard[0][0]==globalBoard[3][3]&&globalBoard[0][0]==globalBoard[2][2]&&globalBoard[0][0]==cpu&&globalBoard[1][1]==32)
-		{
-			arr[0]=1;
-			arr[1]=1;
-			return arr;
-		}
-		else if(globalBoard[0][0]==globalBoard[1][1]&&globalBoard[0][0]==globalBoard[3][3]&&globalBoard[0][0]==cpu&&globalBoard[2][2]==32)
-		{
-			arr[0]=2;
-			arr[1]=2;
-			return arr;
-		}
-		else if(globalBoard[0][3]==globalBoard[1][2]&&globalBoard[0][3]==globalBoard[2][1]&&globalBoard[0][3]==cpu&&globalBoard[3][0]==32)
-		{
-			arr[0]=3;
-			arr[1]=0;
-			return arr;
-		}
-		else if(globalBoard[3][0]==globalBoard[1][2]&&globalBoard[3][0]==globalBoard[2][1]&&globalBoard[3][0]==cpu&&globalBoard[0][3]==32)
-		{
-			arr[0]=0;
-			arr[1]=3;
-			return arr;
-		}
-		else if(globalBoard[0][3]==globalBoard[3][0]&&globalBoard[0][3]==globalBoard[2][1]&&globalBoard[0][3]==cpu&&globalBoard[1][2]==32)
-		{
-			arr[0]=1;
-			arr[1]=2;
-			return arr;
-		}
-		else if(globalBoard[0][3]==globalBoard[1][2]&&globalBoard[0][3]==globalBoard[3][0]&&globalBoard[0][3]==cpu&&globalBoard[2][1]==32)
-		{
-			arr[0]=2;
-			arr[1]=1;
-			return arr;
-		}
-		
-		for (int i = 0; i<globalBoard.length; i++)
-		{
-			if (globalBoard[i][0]==globalBoard[i][1]&&globalBoard[i][0]==globalBoard[i][2]&&globalBoard[i][0]==player&&globalBoard[i][3]==32)
-			{
-				arr[0]=i;
-				arr[1]=3;
-				return arr;
-			}
-			else if (globalBoard[i][0]==globalBoard[i][1]&&globalBoard[i][0]==globalBoard[i][3]&&globalBoard[i][0]==player&&globalBoard[i][2]==32)
-			{
-				arr[0]=i;
-				arr[1]=2;
-				return arr;
-			}
-			else if (globalBoard[i][0]==globalBoard[i][3]&&globalBoard[i][0]==globalBoard[i][2]&&globalBoard[i][0]==player&&globalBoard[i][1]==32)
-			{
-				arr[0]=i;
-				arr[1]=1;
-				return arr;
-			}
-			else if (globalBoard[i][1]==globalBoard[i][3]&&globalBoard[i][1]==globalBoard[i][2]&&globalBoard[i][1]==player&&globalBoard[i][0]==32)
-			{
-				arr[0]=i;
-				arr[1]=0;
-				return arr;
-			}
-			else if (globalBoard[0][i]==globalBoard[1][i]&&globalBoard[0][i]==globalBoard[2][i]&&globalBoard[0][i]==player&&globalBoard[3][i]==32)
-			{
-				arr[0]=3;
-				arr[1]=i;
-				return arr;
-			}
-			else if (globalBoard[0][i]==globalBoard[3][i]&&globalBoard[0][i]==globalBoard[2][i]&&globalBoard[0][i]==player&&globalBoard[1][i]==32)
-			{
-				arr[0]=1;
-				arr[1]=i;
-				return arr;
-			}
-			else if (globalBoard[0][i]==globalBoard[1][i]&&globalBoard[0][i]==globalBoard[3][i]&&globalBoard[0][i]==player&&globalBoard[2][i]==32)
-			{
-				arr[0]=2;
-				arr[1]=i;
-				return arr;
-			}
-			else if (globalBoard[1][i]==globalBoard[1][i]&&globalBoard[1][i]==globalBoard[2][i]&&globalBoard[1][i]==player&&globalBoard[0][i]==32)
-			{
-				arr[0]=0;
-				arr[1]=i;
-				return arr;
-			}
-
-		}
-		
-		if(globalBoard[0][0]==globalBoard[1][1]&&globalBoard[0][0]==globalBoard[2][2]&&globalBoard[0][0]==player&&globalBoard[3][3]==32)
-		{
-			arr[0]=3;
-			arr[1]=3;
-			return arr;
-		}
-		else if(globalBoard[3][3]==globalBoard[1][1]&&globalBoard[3][3]==globalBoard[2][2]&&globalBoard[3][3]==player&&globalBoard[0][0]==32)
-		{
-			arr[0]=0;
-			arr[1]=0;
-			return arr;
-		}
-		else if(globalBoard[0][0]==globalBoard[3][3]&&globalBoard[0][0]==globalBoard[2][2]&&globalBoard[0][0]==player&&globalBoard[1][1]==32)
-		{
-			arr[0]=1;
-			arr[1]=1;
-			return arr;
-		}
-		else if(globalBoard[0][0]==globalBoard[1][1]&&globalBoard[0][0]==globalBoard[3][3]&&globalBoard[0][0]==player&&globalBoard[2][2]==32)
-		{
-			arr[0]=2;
-			arr[1]=2;
-			return arr;
-		}
-		else if(globalBoard[0][3]==globalBoard[1][2]&&globalBoard[0][3]==globalBoard[2][1]&&globalBoard[0][3]==player&&globalBoard[3][0]==32)
-		{
-			arr[0]=3;
-			arr[1]=0;
-			return arr;
-		}
-		else if(globalBoard[3][0]==globalBoard[1][2]&&globalBoard[3][0]==globalBoard[2][1]&&globalBoard[3][0]==player&&globalBoard[0][3]==32)
-		{
-			arr[0]=0;
-			arr[1]=3;
-			return arr;
-		}
-		else if(globalBoard[0][3]==globalBoard[3][0]&&globalBoard[0][3]==globalBoard[2][1]&&globalBoard[0][3]==player&&globalBoard[1][2]==32)
-		{
-			arr[0]=1;
-			arr[1]=2;
-			return arr;
-		}
-		else if(globalBoard[0][3]==globalBoard[1][2]&&globalBoard[0][3]==globalBoard[3][0]&&globalBoard[0][3]==player&&globalBoard[2][1]==32)
-		{
-			arr[0]=2;
-			arr[1]=1;
-			return arr;
-		}
-		return arr;
-		
-		
-	}
 	private int[] playerturn()
 	{
 		int[] arr = new int[2];
@@ -393,14 +299,14 @@ public class game {
 		}
 		else
 		{
-			if (cpu==cturn)
+			if (cturn==cpu)
 			{
 				System.out.printf("Now its the computer's turn\n");
-				arr = cpuNewTurn();
+				arr = cputurn();
 				System.out.printf("The computer places an %c at %d,%d\n",cpu,arr[0],arr[1]);
 				
 			}
-			else
+			else if (cturn==player)
 			{
 				System.out.printf("Now its the player's turn! \nPlease enter where you would like to place your %c: \n",cturn);
 				arr = playerturn();
